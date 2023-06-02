@@ -1,0 +1,39 @@
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  organization: "org-yWZuUyVHW96OXl6ySsBRocvL",
+  apiKey: `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`,
+});
+const openai = new OpenAIApi(configuration);
+
+export const generateText = async (message: string) => {
+  try {
+    const res = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `Explain a ${message} concept in 2 paragraphs`,
+        },
+      ],
+    });
+    let responseObject = {
+      // default error state
+      message: "The content is not parsable",
+    };
+    res.data.choices.forEach((choice, idx) => {
+      if (choice.message) {
+        const content = choice.message?.content;
+        if (content) {
+          responseObject = {
+            message: content,
+          };
+        }
+      }
+    });
+    return responseObject;
+  } catch (err) {
+    console.log("Err", err);
+    return err;
+  }
+};

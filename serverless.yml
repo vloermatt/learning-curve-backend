@@ -1,0 +1,27 @@
+service: lc
+frameworkVersion: "3"
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-1
+custom:
+  serverlessPluginTypescript:
+    tsConfigFileLocation: "./tsconfig.json"
+
+functions:
+  # API Lambda Function
+  # Main API used in web and mobile applications
+  # Exposes database CRUD functionality to authenticated users
+  trpc:
+    handler: src/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: trpc/{proxy+}
+          method: any
+          cors: true
